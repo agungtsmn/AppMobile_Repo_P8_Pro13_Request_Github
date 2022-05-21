@@ -5,8 +5,6 @@ import android.os.Bundle
 import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.activityUiThread
-import org.jetbrains.anko.doAsync
 import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
@@ -14,18 +12,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         btn.setOnClickListener {
-            doAsync {
+            Thread(Runnable {
                 val gitHubInfo = fetchGitHubInfo(inputUsername.text.toString())
                 val jsonReader = JSONObject(gitHubInfo)
-                activityUiThread {
+                runOnUiThread(Runnable {
                     val id = jsonReader.getString("id")
                     val name = jsonReader.getString("name")
                     val url = jsonReader.getString("url")
                     val blog = jsonReader.getString("blog")
                     val bio = jsonReader.getString("bio")
                     tvGitHub.text = "$id \n $name \n $url \n $blog \n $bio"
-                }
-            }
+                })
+            })
         }
     }
 
